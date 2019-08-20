@@ -29,6 +29,9 @@
       "js": [
         "src/content_scripts/Content.js"
       ],
+      "css": [
+        "src/content_scripts/Content.css"
+      ],
       "run_at": "document_end"
     }
   ]
