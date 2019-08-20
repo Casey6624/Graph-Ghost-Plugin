@@ -32,3 +32,13 @@
     color: white;
     cursor: pointer;
 }
+
+#g-g-d-Counter{
+    position: fixed;
+    bottom: 0;
+    margin: 2rem 2rem 2rem 20rem;
+    padding: 1rem;
+    border-radius: 2px;
+    background-color: grey;
+    font-family: 'Roboto', sans-serif;
+}
