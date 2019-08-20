@@ -21,7 +21,7 @@ document.getElementById("g-g-d-Cancel").addEventListener("click", function () {
 
 // Code to handle the selection
 document.addEventListener("click", function (e) {
-    if (e.target.id === "g-g-d-Submit" || e.target.nodeName === "HTML" || e.target.nodeName === "BODY") return
+    if (e.target.id === "g-g-d-Submit" || e.target.id === "g-g-d-Cancel" || e.target.nodeName === "HTML" || e.target.nodeName === "BODY") return
     if (elements.includes(e.target)) {
         elements = elements.filter(el => el !== e.target)
         e.target.style.border = null
