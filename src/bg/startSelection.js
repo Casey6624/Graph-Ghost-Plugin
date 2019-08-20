@@ -1,4 +1,4 @@
-/* let elements = []
+let elements = []
 let selecting = false
 
 // Submit Actions
@@ -51,4 +51,4 @@ document.addEventListener("click", function (e) {
     updateCounter()
     e.target.style.border = "2px double red"
     e.target.style.padding = "0.5rem"
-}) */
+})
