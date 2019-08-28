@@ -1,5 +1,4 @@
 let elements = [];
-let selecting = false;
 
 // Submit Actions
 const submitButton = document.createElement("div");
