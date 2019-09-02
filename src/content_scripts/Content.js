@@ -6,7 +6,9 @@ chrome.runtime.onMessage.addListener(gotMessage);
 
 function gotMessage(message, sender, sendResponse) {
   if (message === "true") {
+    // Code to handle the selection
     if (submitButton === undefined) {
+      document.addEventListener("click", e => selectingElements(e));
       submitButton = document.createElement("div");
       submitButton.setAttribute("id", "g-g-d-Submit");
       submitButton.innerHTML = "Create GraphQL API";
@@ -32,6 +34,7 @@ function gotMessage(message, sender, sendResponse) {
             console.log("Graph Ghost is closing...");
             clearElementsAndStyling();
             removeButtonsAndListeners();
+            document.removeEventListener("click", e => selectingElements(e));
           });
         });
     }
@@ -50,24 +53,24 @@ function gotMessage(message, sender, sendResponse) {
     }
   } else {
     removeButtonsAndListeners();
+    document.removeEventListener("click", e => selectingElements(e));
   }
 }
 
 function removeButtonsAndListeners() {
+  document.removeEventListener("click", e => selectingElements(e));
   submitButton.parentNode.removeChild(submitButton);
   submitButton = undefined;
   cancelButton.parentNode.removeChild(cancelButton);
   cancelButton = undefined;
   counterLabel.parentNode.removeChild(counterLabel);
   counterLabel = undefined;
-  document.removeEventListener("click", e => selectingElements(e));
 }
 
 function clearElementsAndStyling() {
   elements.forEach(function(el, index) {
     el.style.border = "none";
     el.style.padding = "0rem";
-    console.log(el.style);
   });
   elements = [];
 }
@@ -86,31 +89,28 @@ function updateCounter() {
   counterLabel.innerHTML = `${elements.length} Elements Selected`;
 }
 
-// Code to handle the selection
-document.addEventListener("click", e => selectingElements(e));
-
-function selectingElements(e) {
+const selectingElements = function({ target }) {
   if (
-    e.target.id === "g-g-d-Submit" ||
-    e.target.id === "g-g-d-Cancel" ||
-    e.target.id === "g-g-d-Counter" ||
-    e.target.nodeName === "HTML" ||
-    e.target.nodeName === "BODY"
+    target.id === "g-g-d-Submit" ||
+    target.id === "g-g-d-Cancel" ||
+    target.id === "g-g-d-Counter" ||
+    target.nodeName === "HTML" ||
+    target.nodeName === "BODY"
   )
     return;
   // Check if item already exists in array, remove it if so
-  if (elements.includes(e.target)) {
-    elements = elements.filter(el => el !== e.target);
+  if (elements.includes(target)) {
+    elements = elements.filter(el => el !== target);
     updateCounter();
-    e.target.style.border = null;
-    e.target.style.padding = null;
+    target.style.border = null;
+    target.style.padding = null;
     console.log(elements);
     return;
   }
   // Add the new item as it is not in the array
-  elements.push(e.target);
+  elements.push(target);
   console.log(elements);
   updateCounter();
-  e.target.style.border = "2px double red";
-  e.target.style.padding = "0.5rem";
-}
+  target.style.border = "2px double red";
+  target.style.padding = "0.5rem";
+};
