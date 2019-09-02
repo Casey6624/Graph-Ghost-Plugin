@@ -1,4 +1,4 @@
-chrome.browserAction.onClicked.addListener(function(tab) {
+/* chrome.browserAction.onClicked.addListener(function(tab) {
   chrome.storage.sync.get("g-g-dState", function(items) {
     let oldValue = items["g-g-dState"];
     if (oldValue === undefined) oldValue = "false";
@@ -11,12 +11,15 @@ chrome.browserAction.onClicked.addListener(function(tab) {
         chrome.tabs.executeScript(null, { file: "./startSelection.js" });
     });
   });
-});
+}); */
+
+console.log("background.js is running");
 
 chrome.browserAction.onClicked.addListener(btnClicked);
 
-function btnClicked(tab) {
-  console.log("Start editing");
+function btnClicked({ id }) {
+  console.log("Plugin clicked");
+  console.log(id);
 
-  chrome.tabs.sendMessage(tab.id, true);
+  chrome.tabs.sendMessage(id, "testing123");
 }
