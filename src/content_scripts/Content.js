@@ -1,6 +1,12 @@
 let elements = [];
 let state = false;
 
+chrome.runtime.onMessage.addListener(gotMessage);
+
+function gotMessage(message, sender, sendRes) {
+  console.log("Triggered Inject.js" + message);
+}
+
 console.log("yayayayay");
 
 function checkIfEditing() {
