@@ -30,6 +30,7 @@ function gotMessage(message, sender, sendResponse) {
           // Here we want to set localStorage to "false" as we want to stop using the editor mode
           chrome.storage.sync.set({ "g-g-dState": "false" }, function() {
             console.log("Graph Ghost is closing...");
+            clearElementsAndStyling();
             removeButtonsAndListeners();
           });
         });
@@ -59,6 +60,16 @@ function removeButtonsAndListeners() {
   cancelButton = undefined;
   counterLabel.parentNode.removeChild(counterLabel);
   counterLabel = undefined;
+  document.removeEventListener("click", e => selectingElements(e));
+}
+
+function clearElementsAndStyling() {
+  elements.forEach(function(el, index) {
+    el.style.border = "none";
+    el.style.padding = "0rem";
+    console.log(el.style);
+  });
+  elements = [];
 }
 
 console.log("Content Script is running");
@@ -71,12 +82,14 @@ function checkIfEditing() {
 }
 
 function updateCounter() {
+  if (counterLabel === undefined) return;
   counterLabel.innerHTML = `${elements.length} Elements Selected`;
 }
 
 // Code to handle the selection
-document.addEventListener("click", function(e) {
-  // Validation
+document.addEventListener("click", e => selectingElements(e));
+
+function selectingElements(e) {
   if (
     e.target.id === "g-g-d-Submit" ||
     e.target.id === "g-g-d-Cancel" ||
@@ -100,4 +113,4 @@ document.addEventListener("click", function(e) {
   updateCounter();
   e.target.style.border = "2px double red";
   e.target.style.padding = "0.5rem";
-});
+}
