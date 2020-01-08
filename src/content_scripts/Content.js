@@ -1,6 +1,7 @@
-let elements = [];
+const entities = [];
+const attributes = [];
 
-let submitButton, cancelButton, counterLabel;
+let btnSubmit, btnCancel, btnAddAttri, counterLabel, txtAttri;
 
 // this will be eventually be https://graphghost.co.uk/api or something similar
 const NODE_SERVER = "http://127.0.0.1:4500/crawlme";
@@ -16,41 +17,70 @@ chrome.extension.sendMessage({}, function(response) {
       function gotMessage(message, sender, sendResponse) {
         if (message === "true") {
           // set up submit button if not defined
-          if (submitButton === undefined) {
-            document.addEventListener("click", e => selectingElements(e));
-            submitButton = document.createElement("div");
-            submitButton.setAttribute("id", "g-g-d-Submit");
-            submitButton.innerHTML = "Create GraphQL API";
-            document.body.appendChild(submitButton);
-            submitButton.addEventListener("click", function() {
+          if (btnSubmit === undefined) {
+            document.addEventListener("click", e => selectingEntities(e));
+            btnSubmit = document.createElement("div");
+            btnSubmit.setAttribute("id", "g-g-d-Submit");
+            btnSubmit.innerHTML = "Done";
+            document.body.appendChild(btnSubmit);
+            btnSubmit.addEventListener("click", function() {
               postToServer();
             });
           }
           // set up cancel button if not defined
-          if (cancelButton === undefined) {
+          if (btnCancel === undefined) {
             // Cancel Actions
-            cancelButton = document.createElement("div");
-            cancelButton.setAttribute("id", "g-g-d-Cancel");
-            cancelButton.innerHTML = "Cancel";
-            document.body.appendChild(cancelButton);
-            cancelButton.addEventListener("click", function() {
+            btnCancel = document.createElement("div");
+            btnCancel.setAttribute("id", "g-g-d-Cancel");
+            btnCancel.innerHTML = "Cancel";
+            document.body.appendChild(btnCancel);
+            btnCancel.addEventListener("click", function() {
               // Here we want to set localStorage to "false" as we want to stop using the editor mode
               chrome.storage.sync.set({ "g-g-dState": "false" }, function() {
                 console.log("Graph Ghost is closing...");
-                clearElementsAndStyling();
+                clearentitiesAndStyling();
                 removeButtonsAndListeners();
                 document.removeEventListener("click", e =>
-                  selectingElements(e)
+                  selectingEntities(e)
                 );
               });
             });
+          }
+          // set up cancel button if not defined
+          // TODO: GGET THIS WORKING START FROM HERE
+          if (txtAttri === undefined) {
+            // Cancel Actions
+            txtAttri = document.createElement("input");
+            txtAttri.setAttribute("id", "g-g-d-txtAttri");
+            txtAttri.type = "text";
+            document.body.appendChild(txtAttri);
+            txtAttri.addEventListener("click", function() {
+              // Here we want to set localStorage to "false" as we want to stop using the editor mode
+              chrome.storage.sync.set({ "g-g-dState": "false" }, function() {
+                console.log("Graph Ghost is closing...");
+                clearentitiesAndStyling();
+                removeButtonsAndListeners();
+                document.removeEventListener("click", e =>
+                  selectingEntities(e)
+                );
+              });
+            });
+          }
+          // set up cancel button if not defined
+          if (btnAddAttri === undefined) {
+            // Cancel Actions
+            btnAddAttri = document.createElement("div");
+            btnAddAttri.setAttribute("id", "g-g-d-addAttri");
+            btnAddAttri.innerHTML = "Add";
+            document.body.appendChild(btnAddAttri);
+            btnAddAttri.addEventListener("click", function() {});
           }
           // set up counter if not defined
           if (counterLabel === undefined) {
             // Counter Actions
             counterLabel = document.createElement("div");
             counterLabel.setAttribute("id", "g-g-d-Counter");
-            counterLabel.innerHTML = `${elements.length} Elements Selected`;
+            counterLabel.innerHTML = `${entities.length} entities Selected`;
             document.body.appendChild(counterLabel);
             counterLabel.addEventListener("click", function() {
               console.log("Cancelling API Creation");
@@ -58,35 +88,36 @@ chrome.extension.sendMessage({}, function(response) {
           }
         } else {
           removeButtonsAndListeners();
-          document.removeEventListener("click", e => selectingElements(e));
+          document.removeEventListener("click", e => selectingEntities(e));
         }
       }
 
       function removeButtonsAndListeners() {
         console.log("removing event listener!");
-        document.removeEventListener("click", e => selectingElements(e));
-        submitButton.removeEventListener("click");
-        cancelButton.removeEventListener("click");
-        submitButton.parentNode.removeChild(submitButton);
-        submitButton = undefined;
-        cancelButton.parentNode.removeChild(cancelButton);
-        cancelButton = undefined;
+        document.removeEventListener("click", e => selectingEntities(e));
+        btnSubmit.removeEventListener("click");
+        btnCancel.removeEventListener("click");
+        btnSubmit.parentNode.removeChild(btnSubmit);
+        btnSubmit = undefined;
+        btnCancel.parentNode.removeChild(btnCancel);
+        btnCancel = undefined;
         counterLabel.parentNode.removeChild(counterLabel);
         counterLabel = undefined;
       }
 
-      function clearElementsAndStyling() {
-        elements.forEach(function(el, index) {
-          // remove styling and clear elements array
+      function clearentitiesAndStyling() {
+        entities.forEach(function(el, index) {
+          // remove styling and clear entities array
           el.style.border = "none";
           el.style.padding = "0rem";
         });
-        elements = [];
+        entities = [];
       }
 
       function postToServer() {
-        const data = {
-          elements: elements,
+        chrome.runtime.sendMessage({ entities: entities });
+        /*         const data = {
+          entities: entities,
           // This needs changing to be dynamic via the google tabs API
           url: "http://localhost/ggd/index.html"
         };
@@ -101,17 +132,17 @@ chrome.extension.sendMessage({}, function(response) {
           .then(response => console.log("Success: ", JSON.stringify(response)))
           .catch(err => {
             return err;
-          });
+          }); */
       }
 
       console.log("Content Script is running");
 
       function updateCounter() {
         if (counterLabel === undefined) return;
-        counterLabel.innerHTML = `${elements.length} Elements Selected`;
+        counterLabel.innerHTML = `${entities.length} entities Selected`;
       }
 
-      const selectingElements = function({ target }) {
+      const selectingEntities = function({ target }) {
         if (
           target.id === "g-g-d-Submit" ||
           target.id === "g-g-d-Cancel" ||
@@ -121,17 +152,17 @@ chrome.extension.sendMessage({}, function(response) {
         )
           return;
         // Check if item already exists in array, remove it if so
-        if (elements.includes(target)) {
-          elements = elements.filter(el => el !== target);
+        if (entities.includes(target)) {
+          entities = entities.filter(el => el !== target);
           updateCounter();
           target.style.border = null;
           target.style.padding = null;
-          console.log(elements);
+          console.log(entities);
           return;
         }
         // Add the new item as it is not in the array
-        elements.push(target);
-        console.log(elements);
+        entities.push(target);
+        console.log(entities);
         updateCounter();
         target.style.border = "2px double red";
         target.style.padding = "0.5rem";

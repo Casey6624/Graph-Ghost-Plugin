@@ -1,44 +1,70 @@
-@import url('https://fonts.googleapis.com/css?family=Roboto&display=swap');
+@import url("https://fonts.googleapis.com/css?family=Roboto&display=swap");
 
-#g-g-d-Submit{
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    margin: 2rem;
-    padding: 1rem;
-    border-radius: 2px;
-    background-color: #4CAF50;
-    font-family: 'Roboto', sans-serif;
+#g-g-d-Submit {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  margin: 2rem;
+  padding: 1rem;
+  border-radius: 2px;
+  background-color: #4caf50;
+  font-family: "Roboto", sans-serif;
 }
 
-#g-g-d-Submit:hover{
-    background-color: #4CAF50;
-    color: white;
-    cursor: pointer;
+#g-g-d-Submit:hover {
+  background-color: #4caf50;
+  color: white;
+  cursor: pointer;
 }
 
-#g-g-d-Cancel{
-    position: fixed;
-    bottom: 0;
-    margin: 2rem 2rem 2rem 14rem;
-    padding: 1rem;
-    border-radius: 2px;
-    background-color: red;
-    font-family: 'Roboto', sans-serif;
+#g-g-d-Cancel {
+  position: fixed;
+  bottom: 0;
+  margin: 2rem 2rem 2rem 19rem;
+  padding: 1rem;
+  border-radius: 2px;
+  background-color: red;
+  font-family: "Roboto", sans-serif;
 }
 
-#g-g-d-Cancel:hover{
-    background-color: red;
-    color: white;
-    cursor: pointer;
+#g-g-d-Cancel:hover {
+  background-color: red;
+  color: white;
+  cursor: pointer;
 }
 
-#g-g-d-Counter{
-    position: fixed;
-    bottom: 0;
-    margin: 2rem 2rem 2rem 20rem;
-    padding: 1rem;
-    border-radius: 2px;
-    background-color: grey;
-    font-family: 'Roboto', sans-serif;
+#g-g-d-Counter {
+  position: fixed;
+  bottom: 0;
+  margin: 2rem 2rem 2rem 25rem;
+  padding: 1rem;
+  border-radius: 2px;
+  background-color: grey;
+  font-family: "Roboto", sans-serif;
+}
+
+#g-g-d-addAttri {
+  position: fixed;
+  bottom: 0;
+  margin: 2rem 2rem 2rem 8rem;
+  padding: 1rem;
+  border-radius: 2px;
+  background-color: black;
+  font-family: "Roboto", sans-serif;
+}
+
+#g-g-d-addAttri:hover {
+  background-color: whitesmoke;
+  color: black;
+  cursor: pointer;
+}
+
+#g-g-d-txtAttri {
+  position: fixed;
+  bottom: 0;
+  margin: 2rem 2rem 2rem 12rem;
+  padding: 1rem;
+  border-radius: 2px;
+  background-color: black;
+  font-family: "Roboto", sans-serif;
 }
