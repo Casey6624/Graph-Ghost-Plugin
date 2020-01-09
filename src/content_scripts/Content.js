@@ -1,5 +1,5 @@
-const entities = [];
-const attributes = [];
+let entities = [];
+let attributes = [];
 
 let btnSubmit, btnCancel, btnAddAttri, counterLabel, txtAttri;
 
@@ -53,6 +53,7 @@ chrome.extension.sendMessage({}, function(response) {
             txtAttri = document.createElement("input");
             txtAttri.setAttribute("id", "g-g-d-txtAttri");
             txtAttri.type = "text";
+            txtAttri.placeholder = "Attribute Name";
             document.body.appendChild(txtAttri);
             txtAttri.addEventListener("click", function() {
               // Here we want to set localStorage to "false" as we want to stop using the editor mode
@@ -147,6 +148,7 @@ chrome.extension.sendMessage({}, function(response) {
           target.id === "g-g-d-Submit" ||
           target.id === "g-g-d-Cancel" ||
           target.id === "g-g-d-Counter" ||
+          target.id === "g-g-d-txtAttri" ||
           target.nodeName === "HTML" ||
           target.nodeName === "BODY"
         )

@@ -20,7 +20,7 @@
 #g-g-d-Cancel {
   position: fixed;
   bottom: 0;
-  margin: 2rem 2rem 2rem 19rem;
+  margin: 2rem 2rem 2rem 38rem;
   padding: 1rem;
   border-radius: 2px;
   background-color: red;
@@ -36,7 +36,7 @@
 #g-g-d-Counter {
   position: fixed;
   bottom: 0;
-  margin: 2rem 2rem 2rem 25rem;
+  margin: 2rem 2rem 2rem 27rem;
   padding: 1rem;
   border-radius: 2px;
   background-color: grey;
@@ -65,6 +65,6 @@
   margin: 2rem 2rem 2rem 12rem;
   padding: 1rem;
   border-radius: 2px;
-  background-color: black;
+  background-color: white;
   font-family: "Roboto", sans-serif;
 }

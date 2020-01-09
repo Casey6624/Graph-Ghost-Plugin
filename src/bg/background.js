@@ -4,7 +4,7 @@ chrome.browserAction.onClicked.addListener(btnClicked);
 
 //receive message
 chrome.runtime.onMessage((message, sender) => {
-  console.log("bloody fuck! We've got a message");
+  console.log("Message sent");
   chrome.tabs.create({ url: "NEW URL" }, tab => {
     setTimeout(() => {
       //use your message data here.
