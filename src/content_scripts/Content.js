@@ -3,8 +3,10 @@ let finishedEntities = [];
 
 let btnSubmit, btnCancel, btnAddAttri, counterLabel, txtAttri;
 
+let currUrl = "";
+
 // this will be eventually be https://graphghost.co.uk/api or something similar
-const NODE_SERVER = "http://127.0.0.1:4500/crawlme";
+const NODE_SERVER = "http://127.0.0.1:4500/crawl-me";
 
 /* chrome.extension.sendMessage({}, function(response) {
   var readyStateCheckInterval = setInterval(function() {
@@ -12,7 +14,7 @@ const NODE_SERVER = "http://127.0.0.1:4500/crawlme";
       clearInterval(readyStateCheckInterval); */
 
 // Add a listener to listen to the message from background.js
-chrome.runtime.onMessage.addListener(gotMessage);
+chrome.runtime.onMessage.addListener(messageFromBackgroundjs);
 
 function btnCancelHandler() {
   removeButtonsAndListeners();
@@ -32,21 +34,24 @@ function btnAddHandler() {
   let data = { entityName: txtAttri.value, attributes: [...entities] };
 
   finishedEntities.push(data);
-  entities.forEach(element => {
-    element.style.border = "2px double black";
-    element.style.background = "#f2f2f2";
+  entities.forEach(({ style }) => {
+    style.border = "2px double black";
+    style.background = "#f2f2f2";
   });
 
   entities = [];
+  txtAttri.value = "";
+  txtAttri.textContent = "";
 
   console.log("finishedEntities");
   console.log(finishedEntities);
 }
 
-function gotMessage(message, sender, sendResponse) {
+function messageFromBackgroundjs({ id, url }, sender, sendResponse) {
+  currUrl = url;
   // set up submit button if not defined
+  document.addEventListener("click", e => selectingEntities(e));
   if (btnSubmit === undefined) {
-    document.addEventListener("click", e => selectingEntities(e));
     btnSubmit = document.createElement("div");
     btnSubmit.setAttribute("id", "g-g-d-Submit");
     btnSubmit.innerHTML = "Done";
@@ -91,17 +96,28 @@ function gotMessage(message, sender, sendResponse) {
 }
 
 function removeButtonsAndListeners() {
-  console.log("removing event listener!");
-  document.removeEventListener("click", e => selectingEntities(e));
+  console.log("Removing plugin event listeners and controls");
+  document.removeEventListener("click", selectingEntities);
   if (btnSubmit !== undefined) {
     btnSubmit.removeEventListener("click", btnSubmitHandler);
   }
   if (btnSubmit !== undefined) {
     btnCancel.removeEventListener("click", btnCancelHandler);
   }
+  if (btnAddAttri !== undefined) {
+    btnAddAttri.removeEventListener("click", btnAddHandler);
+  }
   if (btnSubmit.parentNode !== undefined) {
     btnSubmit.parentNode.removeChild(btnSubmit);
     btnSubmit = undefined;
+  }
+  if (txtAttri.parentNode !== undefined) {
+    txtAttri.parentNode.removeChild(txtAttri);
+    txtAttri = undefined;
+  }
+  if (btnAddAttri.parentNode !== undefined) {
+    btnAddAttri.parentNode.removeChild(btnAddAttri);
+    btnAddAttri = undefined;
   }
   if (btnCancel.parentNode !== undefined) {
     btnCancel.parentNode.removeChild(btnCancel);
@@ -113,6 +129,7 @@ function removeButtonsAndListeners() {
   }
 }
 
+// return truthy falsey depending on whether the validation passes
 function validateAttrName() {
   if (txtAttri.value.trim() === "") return false;
   const conditions = [
@@ -153,12 +170,11 @@ function postToServer() {
   chrome.tabs.getSelected(null, function({ url }) {
     alert(url);
   });
-  return;
-  chrome.runtime.sendMessage({ entities: entities });
+
   const data = {
     entities: [...finishedEntities],
     // This needs changing to be dynamic via the google tabs API
-    url: "http://localhost/ggd/index.html"
+    url: currUrl
   };
   fetch(NODE_SERVER, {
     method: "POST",
@@ -181,7 +197,8 @@ function updateCounter() {
   counterLabel.innerHTML = `${entities.length} entities Selected`;
 }
 
-const selectingEntities = function({ target }) {
+function selectingEntities({ target }) {
+  if (btnSubmit === undefined) return;
   if (
     target.id === "g-g-d-Submit" ||
     target.id === "g-g-d-Cancel" ||
@@ -218,6 +235,6 @@ const selectingEntities = function({ target }) {
   updateCounter();
   target.style.border = "2px double red";
   target.style.padding = "0.5rem";
-};
+}
 //}
 /*   }, 10); */
