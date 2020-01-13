@@ -1,5 +1,5 @@
-let finishedAttributes = [];
-let attributes = [];
+let entities = [];
+let finishedEntities = [];
 
 let btnSubmit, btnCancel, btnAddAttri, counterLabel, txtAttri;
 
@@ -14,6 +14,27 @@ const NODE_SERVER = "http://127.0.0.1:4500/crawlme";
 // Add a listener to listen to the message from background.js
 chrome.runtime.onMessage.addListener(gotMessage);
 
+function btnCancelHandler() {
+  removeButtonsAndListeners();
+}
+
+function btnSubmitHandler() {
+  postToServer();
+}
+
+function btnAddHandler() {
+  console.log("add handler triggered!");
+  if (txtAttri.value === "") {
+    // TODO: add validation
+    console.log("this cannot be empty");
+    return;
+  }
+  let data = { entityName: txtAttri.value, attributes: [...entities] };
+  finishedEntities.push(data);
+  console.log("finishedEntities");
+  console.log(finishedEntities);
+}
+
 function gotMessage(message, sender, sendResponse) {
   // set up submit button if not defined
   if (btnSubmit === undefined) {
@@ -22,9 +43,7 @@ function gotMessage(message, sender, sendResponse) {
     btnSubmit.setAttribute("id", "g-g-d-Submit");
     btnSubmit.innerHTML = "Done";
     document.body.appendChild(btnSubmit);
-    btnSubmit.addEventListener("click", function() {
-      postToServer();
-    });
+    btnSubmit.addEventListener("click", btnSubmitHandler);
   }
   // set up cancel button if not defined
   if (btnCancel === undefined) {
@@ -33,15 +52,7 @@ function gotMessage(message, sender, sendResponse) {
     btnCancel.setAttribute("id", "g-g-d-Cancel");
     btnCancel.innerHTML = "Cancel";
     document.body.appendChild(btnCancel);
-    btnCancel.addEventListener("click", function() {
-      // Here we want to set localStorage to "false" as we want to stop using the editor mode
-      chrome.storage.sync.set({ "g-g-dState": "false" }, function() {
-        console.log("Graph Ghost is closing...");
-        clearEntitiesAndStyling();
-        removeButtonsAndListeners();
-        document.removeEventListener("click", e => selectingEntities(e));
-      });
-    });
+    btnCancel.addEventListener("click", btnCancelHandler);
   }
   // set up cancel button if not defined
   if (txtAttri === undefined) {
@@ -59,7 +70,7 @@ function gotMessage(message, sender, sendResponse) {
     btnAddAttri.setAttribute("id", "g-g-d-addAttri");
     btnAddAttri.innerHTML = "Add";
     document.body.appendChild(btnAddAttri);
-    btnAddAttri.addEventListener("click", function() {});
+    btnAddAttri.addEventListener("click", btnAddHandler);
   }
   // set up counter if not defined
   if (counterLabel === undefined) {
@@ -75,10 +86,10 @@ function removeButtonsAndListeners() {
   console.log("removing event listener!");
   document.removeEventListener("click", e => selectingEntities(e));
   if (btnSubmit !== undefined) {
-    btnSubmit.removeEventListener("click");
+    btnSubmit.removeEventListener("click", btnSubmitHandler);
   }
   if (btnSubmit !== undefined) {
-    btnCancel.removeEventListener("click");
+    btnCancel.removeEventListener("click", btnCancelHandler);
   }
   if (btnSubmit.parentNode !== undefined) {
     btnSubmit.parentNode.removeChild(btnSubmit);
@@ -169,6 +180,18 @@ const selectingEntities = function({ target }) {
     target.nodeName === "BODY"
   )
     return;
+
+  let arrCheck;
+
+  let checkAlreadyInArr = finishedEntities.forEach(({ attributes }) => {
+    arrCheck = attributes.includes(target);
+  });
+  console.log(checkAlreadyInArr);
+
+  if (arrCheck) {
+    console.log("already in array");
+    return;
+  }
   // Check if item already exists in array, remove it if so
   if (entities.includes(target)) {
     entities = entities.filter(el => el !== target);
