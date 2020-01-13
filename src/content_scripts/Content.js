@@ -30,7 +30,15 @@ function btnAddHandler() {
     return;
   }
   let data = { entityName: txtAttri.value, attributes: [...entities] };
+
   finishedEntities.push(data);
+  entities.forEach(element => {
+    element.style.border = "2px double black";
+    element.style.background = "#f2f2f2";
+  });
+
+  entities = [];
+
   console.log("finishedEntities");
   console.log(finishedEntities);
 }
@@ -181,12 +189,11 @@ const selectingEntities = function({ target }) {
   )
     return;
 
+  // check to see if the user has already selected the attributes, skip if they have
   let arrCheck;
-
-  let checkAlreadyInArr = finishedEntities.forEach(({ attributes }) => {
+  finishedEntities.forEach(({ attributes }) => {
     arrCheck = attributes.includes(target);
   });
-  console.log(checkAlreadyInArr);
 
   if (arrCheck) {
     console.log("already in array");
