@@ -144,30 +144,34 @@ function clearEntitiesAndStyling() {
 }
 
 function postToServer() {
-  const validAttrName = validateAttrName();
-  console.log(validAttrName);
+  if (finishedEntities.length === 0) {
+    // TODO: Add validation message here
+    console.log("You need to add at least one entity!");
+    return;
+  }
 
-  let data = { entityName: txtAttri.value, entities: [...entities] };
-  chrome.runtime.sendMessage(JSON.stringify(data));
+  chrome.tabs.getSelected(null, function({ url }) {
+    alert(url);
+  });
   return;
   chrome.runtime.sendMessage({ entities: entities });
-  /*         const data = {
-          entities: entities,
-          // This needs changing to be dynamic via the google tabs API
-          url: "http://localhost/ggd/index.html"
-        };
-        fetch(NODE_SERVER, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(data)
-        })
-          .then(res => res.json())
-          .then(response => console.log("Success: ", JSON.stringify(response)))
-          .catch(err => {
-            return err;
-          }); */
+  const data = {
+    entities: [...finishedEntities],
+    // This needs changing to be dynamic via the google tabs API
+    url: "http://localhost/ggd/index.html"
+  };
+  fetch(NODE_SERVER, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(data)
+  })
+    .then(res => res.json())
+    .then(response => console.log("Success: ", JSON.stringify(response)))
+    .catch(err => {
+      return err;
+    });
 }
 
 console.log("Content Script is running");
