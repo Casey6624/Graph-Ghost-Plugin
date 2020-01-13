@@ -8,22 +8,17 @@ let currUrl = "";
 // this will be eventually be https://graphghost.co.uk/api or something similar
 const NODE_SERVER = "http://localhost:4500/crawl-me";
 
-/* chrome.extension.sendMessage({}, function(response) {
-  var readyStateCheckInterval = setInterval(function() {
-    if (document.readyState === "complete") {
-      clearInterval(readyStateCheckInterval); */
-
 // Add a listener to listen to the message from background.js
 chrome.runtime.onMessage.addListener(messageFromBackgroundjs);
-
+// Cancel functionality
 function btnCancelHandler() {
   removeButtonsAndListeners();
 }
-
+// Submit/Done functionality
 function btnSubmitHandler() {
   postToServer();
 }
-
+// Add Attribute functionality
 function btnAddHandler() {
   console.log("add handler triggered!");
   if (txtAttri.value === "") {
