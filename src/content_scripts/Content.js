@@ -6,7 +6,7 @@ let btnSubmit, btnCancel, btnAddAttri, counterLabel, txtAttri;
 let currUrl = "";
 
 // this will be eventually be https://graphghost.co.uk/api or something similar
-const NODE_SERVER = "http://127.0.0.1:4500/crawl-me";
+const NODE_SERVER = "http://localhost:4500/crawl-me";
 
 /* chrome.extension.sendMessage({}, function(response) {
   var readyStateCheckInterval = setInterval(function() {
@@ -31,7 +31,8 @@ function btnAddHandler() {
     console.log("this cannot be empty");
     return;
   }
-  let data = { entityName: txtAttri.value, attributes: [...entities] };
+  let tempArr = [...entities];
+  let data = { entityName: txtAttri.value, attributes: [...tempArr] };
 
   finishedEntities.push(data);
   entities.forEach(({ style }) => {
@@ -151,25 +152,12 @@ function validateAttrName() {
   return !testInput;
 }
 
-function clearEntitiesAndStyling() {
-  entities.forEach(function({ style }, index) {
-    // remove styling and clear entities array
-    style.border = "none";
-    style.padding = "0rem";
-  });
-  entities = [];
-}
-
 function postToServer() {
   if (finishedEntities.length === 0) {
     // TODO: Add validation message here
     console.log("You need to add at least one entity!");
     return;
   }
-
-  chrome.tabs.getSelected(null, function({ url }) {
-    alert(url);
-  });
 
   const data = {
     entities: [...finishedEntities],
@@ -183,8 +171,9 @@ function postToServer() {
     },
     body: JSON.stringify(data)
   })
-    .then(res => res.json())
-    .then(response => console.log("Success: ", JSON.stringify(response)))
+    .then(res => {
+      console.log(res);
+    })
     .catch(err => {
       return err;
     });
