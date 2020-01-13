@@ -1,4 +1,4 @@
-let entities = [];
+let finishedAttributes = [];
 let attributes = [];
 
 let btnSubmit, btnCancel, btnAddAttri, counterLabel, txtAttri;
@@ -68,9 +68,6 @@ function gotMessage(message, sender, sendResponse) {
     counterLabel.setAttribute("id", "g-g-d-Counter");
     counterLabel.innerHTML = `${entities.length} entities Selected`;
     document.body.appendChild(counterLabel);
-    counterLabel.addEventListener("click", function() {
-      console.log("Cancelling API Creation");
-    });
   }
 }
 
@@ -98,9 +95,7 @@ function removeButtonsAndListeners() {
 }
 
 function validateAttrName() {
-  if (txtAttri.value.trim() === "") {
-    return false;
-  }
+  if (txtAttri.value.trim() === "") return false;
   const conditions = [
     "!",
     "?",
@@ -132,6 +127,9 @@ function clearEntitiesAndStyling() {
 function postToServer() {
   const validAttrName = validateAttrName();
   console.log(validAttrName);
+
+  let data = { entityName: txtAttri.value, entities: [...entities] };
+  chrome.runtime.sendMessage(JSON.stringify(data));
   return;
   chrome.runtime.sendMessage({ entities: entities });
   /*         const data = {
@@ -166,6 +164,7 @@ const selectingEntities = function({ target }) {
     target.id === "g-g-d-Cancel" ||
     target.id === "g-g-d-Counter" ||
     target.id === "g-g-d-txtAttri" ||
+    target.id === "g-g-d-addAttri" ||
     target.nodeName === "HTML" ||
     target.nodeName === "BODY"
   )
@@ -174,8 +173,8 @@ const selectingEntities = function({ target }) {
   if (entities.includes(target)) {
     entities = entities.filter(el => el !== target);
     updateCounter();
-    target.style.border = null;
-    target.style.padding = null;
+    target.style.border = "";
+    target.style.padding = "";
     console.log(entities);
     return;
   }

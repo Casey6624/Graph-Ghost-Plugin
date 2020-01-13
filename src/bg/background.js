@@ -4,15 +4,24 @@ chrome.browserAction.onClicked.addListener(btnClicked);
 
 //receive message
 chrome.runtime.onMessage((message, sender) => {
-  console.log("Message sent");
+  /*   console.log("Message sent");
   chrome.tabs.create({ url: "NEW URL" }, tab => {
     setTimeout(() => {
       //use your message data here.
       chrome.tabs.executeScript(tab.id, {
         code: "document.title = message.title"
       });
-    }, 3000);
-  });
+    }, 3000); */
+  console.log(message);
+
+  chrome.tabs.create({ url: chrome.extension.getURL("notes.html") });
+});
+
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+  console.log(request);
+
+  chrome.tabs.create({ url: chrome.extension.getURL("notes.html") });
+  sendResponse();
 });
 
 function btnClicked({ id }) {
