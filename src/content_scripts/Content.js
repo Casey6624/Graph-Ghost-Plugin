@@ -1,3 +1,4 @@
+console.log("Content Script is running");
 let entities = [];
 let finishedEntities = [];
 
@@ -10,6 +11,8 @@ const NODE_SERVER = "http://localhost:4500/crawl-me";
 
 // Add a listener to listen to the message from background.js
 chrome.runtime.onMessage.addListener(messageFromBackgroundjs);
+
+/* HANDLERS */
 // Cancel functionality
 function btnCancelHandler() {
   removeButtonsAndListeners();
@@ -41,7 +44,10 @@ function btnAddHandler() {
 
   console.log("finishedEntities");
   console.log(finishedEntities);
+  updateCounter();
 }
+
+/* EVENTS */
 
 function messageFromBackgroundjs({ id, url }, sender, sendResponse) {
   currUrl = url;
@@ -124,29 +130,7 @@ function removeButtonsAndListeners() {
     counterLabel = undefined;
   }
 }
-
-// return truthy falsey depending on whether the validation passes
-function validateAttrName() {
-  if (txtAttri.value.trim() === "") return false;
-  const conditions = [
-    "!",
-    "?",
-    " ",
-    "*",
-    "/",
-    "\\",
-    "`",
-    "#",
-    "~",
-    "=",
-    "+",
-    "-"
-  ];
-  const testInput = conditions.some(cond => txtAttri.value.includes(cond));
-  // if false then contains illegal characters
-  return !testInput;
-}
-
+// Send to NodeJS logic
 function postToServer() {
   if (finishedEntities.length === 0) {
     // TODO: Add validation message here
@@ -174,8 +158,7 @@ function postToServer() {
     });
 }
 
-console.log("Content Script is running");
-
+// Update DOM with the current number of elements
 function updateCounter() {
   if (counterLabel === undefined) return;
   counterLabel.innerHTML = `${entities.length} entities Selected`;
@@ -220,5 +203,51 @@ function selectingEntities({ target }) {
   target.style.border = "2px double red";
   target.style.padding = "0.5rem";
 }
-//}
-/*   }, 10); */
+
+// Taken from stackoverflow do not trust! https://stackoverflow.com/questions/2661818/javascript-get-xpath-of-a-node
+function createXPathFromElement(elm) {
+  var allNodes = document.getElementsByTagName("*");
+  for (var segs = []; elm && elm.nodeType == 1; elm = elm.parentNode) {
+    if (elm.hasAttribute("id")) {
+      var uniqueIdCount = 0;
+      for (var n = 0; n < allNodes.length; n++) {
+        if (allNodes[n].hasAttribute("id") && allNodes[n].id == elm.id)
+          uniqueIdCount++;
+        if (uniqueIdCount > 1) break;
+      }
+      if (uniqueIdCount == 1) {
+        segs.unshift('id("' + elm.getAttribute("id") + '")');
+        return segs.join("/");
+      } else {
+        segs.unshift(
+          elm.localName.toLowerCase() + '[@id="' + elm.getAttribute("id") + '"]'
+        );
+      }
+    } else if (elm.hasAttribute("class")) {
+      segs.unshift(
+        elm.localName.toLowerCase() +
+          '[@class="' +
+          elm.getAttribute("class") +
+          '"]'
+      );
+    } else {
+      for (i = 1, sib = elm.previousSibling; sib; sib = sib.previousSibling) {
+        if (sib.localName == elm.localName) i++;
+      }
+      segs.unshift(elm.localName.toLowerCase() + "[" + i + "]");
+    }
+  }
+  return segs.length ? "/" + segs.join("/") : null;
+}
+
+function lookupElementByXPath(path) {
+  var evaluator = new XPathEvaluator();
+  var result = evaluator.evaluate(
+    path,
+    document.documentElement,
+    null,
+    XPathResult.FIRST_ORDERED_NODE_TYPE,
+    null
+  );
+  return result.singleNodeValue;
+}
