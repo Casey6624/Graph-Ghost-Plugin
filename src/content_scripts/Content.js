@@ -1,6 +1,8 @@
 console.log("Content Script is running");
-let entities = [];
+let DOMNodes = [];
+let xPathNodes = [];
 let finishedEntities = [];
+let DOMDesc = [];
 
 let btnSubmit, btnCancel, btnAddAttri, counterLabel, txtAttri;
 
@@ -8,6 +10,7 @@ let currUrl = "";
 
 // this will be eventually be https://graphghost.co.uk/api or something similar
 const NODE_SERVER = "http://localhost:4500/crawl-me";
+const CRAWL_URL = "http://localhost:8000/crawl";
 
 // Add a listener to listen to the message from background.js
 chrome.runtime.onMessage.addListener(messageFromBackgroundjs);
@@ -29,20 +32,24 @@ function btnAddHandler() {
     console.log("this cannot be empty");
     return;
   }
-  let tempArr = [...entities];
-  let data = { entityName: txtAttri.value, attributes: [...tempArr] };
+  let tempArr = [...DOMNodes];
+  let data = {
+    entityName: txtAttri.value,
+    xPathNodes: [...xPathNodes],
+    DOMNodes: [...DOMNodes],
+    DOMDesc: [...DOMDesc]
+  };
 
   finishedEntities.push(data);
-  entities.forEach(({ style }) => {
+  DOMNodes.forEach(({ style }) => {
     style.border = "2px double black";
     style.background = "#f2f2f2";
   });
 
-  entities = [];
+  DOMNodes = [];
+  xPathNodes = [];
   txtAttri.value = "";
   txtAttri.textContent = "";
-
-  console.log("finishedEntities");
   console.log(finishedEntities);
   updateCounter();
 }
@@ -92,7 +99,7 @@ function messageFromBackgroundjs({ id, url }, sender, sendResponse) {
     // Counter Actions
     counterLabel = document.createElement("div");
     counterLabel.setAttribute("id", "g-g-d-Counter");
-    counterLabel.innerHTML = `${entities.length} entities Selected`;
+    counterLabel.innerHTML = `${DOMNodes.length} DOMNodes Selected`;
     document.body.appendChild(counterLabel);
   }
 }
@@ -151,7 +158,12 @@ function postToServer() {
     body: JSON.stringify(data)
   })
     .then(res => {
-      console.log(res);
+      return res.json();
+    })
+    .then(resData => {
+      console.log(resData);
+      const { url } = resData;
+      window.location = `${CRAWL_URL}?cid=${url}`;
     })
     .catch(err => {
       return err;
@@ -161,7 +173,7 @@ function postToServer() {
 // Update DOM with the current number of elements
 function updateCounter() {
   if (counterLabel === undefined) return;
-  counterLabel.innerHTML = `${entities.length} entities Selected`;
+  counterLabel.innerHTML = `${DOMNodes.length} DOMNodes Selected`;
 }
 
 function selectingEntities({ target }) {
@@ -188,17 +200,24 @@ function selectingEntities({ target }) {
     return;
   }
   // Check if item already exists in array, remove it if so
-  if (entities.includes(target)) {
-    entities = entities.filter(el => el !== target);
+  if (DOMNodes.includes(target)) {
+    DOMNodes = DOMNodes.filter(el => el !== target);
     updateCounter();
     target.style.border = "";
     target.style.padding = "";
-    console.log(entities);
+    console.log(DOMNodes);
     return;
   }
   // Add the new item as it is not in the array
-  entities.push(target);
-  console.log(entities);
+  const DOMNode = createXPathFromElement(target);
+  DOMNodes.push(target);
+  DOMDesc.push({
+    type: target.localName || target.tagName,
+    content: target.innerHTML || target.innerText || target.value,
+    outerHTML: target.outerHTML
+  });
+  xPathNodes.push(DOMNode);
+  console.log(DOMNodes);
   updateCounter();
   target.style.border = "2px double red";
   target.style.padding = "0.5rem";
