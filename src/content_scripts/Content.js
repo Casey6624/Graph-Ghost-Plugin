@@ -49,6 +49,7 @@ function btnAddHandler() {
   allDOMNodes.push(...DOMNodes);
 
   DOMNodes = [];
+  DOMDesc = [];
   xPathNodes = [];
   txtAttri.value = "";
   txtAttri.textContent = "";
@@ -192,12 +193,13 @@ function selectingEntities({ target }) {
     return;
 
   // check to see if the user has already selected the attributes, skip if they have
-  /*   let arrCheck;
+  let arrCheck;
   finishedEntities.forEach(({ attributes }) => {
+    if (finishedEntities.length === 0 || !attributes) return;
     arrCheck = attributes.includes(target);
-  }); */
+  });
 
-  if (allDOMNodes.includes(target)) {
+  if (allDOMNodes.includes(target) || arrCheck) {
     console.log("already in array");
     return;
   }
@@ -205,8 +207,7 @@ function selectingEntities({ target }) {
   if (DOMNodes.includes(target)) {
     DOMNodes = DOMNodes.filter(el => el !== target);
     updateCounter();
-    target.style.border = "";
-    target.style.padding = "";
+    target.removeAttribute("style");
     console.log(DOMNodes);
     return;
   }
