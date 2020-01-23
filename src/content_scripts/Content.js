@@ -1,5 +1,6 @@
 console.log("Content Script is running");
 let DOMNodes = [];
+let allDOMNodes = [];
 let xPathNodes = [];
 let finishedEntities = [];
 let DOMDesc = [];
@@ -36,7 +37,6 @@ function btnAddHandler() {
   let data = {
     entityName: txtAttri.value,
     xPathNodes: [...xPathNodes],
-    DOMNodes: [...DOMNodes],
     DOMDesc: [...DOMDesc]
   };
 
@@ -45,6 +45,8 @@ function btnAddHandler() {
     style.border = "2px double black";
     style.background = "#f2f2f2";
   });
+
+  allDOMNodes.push(...DOMNodes);
 
   DOMNodes = [];
   xPathNodes = [];
@@ -190,12 +192,12 @@ function selectingEntities({ target }) {
     return;
 
   // check to see if the user has already selected the attributes, skip if they have
-  let arrCheck;
+  /*   let arrCheck;
   finishedEntities.forEach(({ attributes }) => {
     arrCheck = attributes.includes(target);
-  });
+  }); */
 
-  if (arrCheck) {
+  if (allDOMNodes.includes(target)) {
     console.log("already in array");
     return;
   }
