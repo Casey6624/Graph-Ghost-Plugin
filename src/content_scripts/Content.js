@@ -3,6 +3,7 @@ let DOMNodes = [];
 let xPathNodes = [];
 let finishedEntities = [];
 let DOMDesc = [];
+let allDOMNodes = [];
 
 let btnSubmit, btnCancel, btnAddAttri, counterLabel, txtAttri;
 
@@ -10,6 +11,7 @@ let currUrl = "";
 
 // this will be eventually be https://graphghost.co.uk/api or something similar
 const NODE_SERVER = "http://localhost:4500/crawl-me";
+// This will have to be changed to an absolute URL - IE https://graphghost.co.uk
 const CRAWL_URL = "http://localhost:8000/crawl";
 
 // Add a listener to listen to the message from background.js
@@ -47,6 +49,7 @@ function btnAddHandler() {
   });
 
   DOMNodes = [];
+  DOMDesc = [];
   xPathNodes = [];
   txtAttri.value = "";
   txtAttri.textContent = "";
@@ -190,17 +193,17 @@ function selectingEntities({ target }) {
     return;
 
   // check to see if the user has already selected the attributes, skip if they have
-  let arrCheck;
+  /*   let arrCheck;
   finishedEntities.forEach(({ attributes }) => {
     arrCheck = attributes.includes(target);
-  });
+  }); */
 
-  if (arrCheck) {
+  if (allDOMNodes.includes(target)) {
     console.log("already in array");
     return;
   }
   // Check if item already exists in array, remove it if so
-  if (DOMNodes.includes(target)) {
+  if (allDOMNodes.includes(target)) {
     DOMNodes = DOMNodes.filter(el => el !== target);
     updateCounter();
     target.style.border = "";
@@ -211,13 +214,14 @@ function selectingEntities({ target }) {
   // Add the new item as it is not in the array
   const DOMNode = createXPathFromElement(target);
   DOMNodes.push(target);
+  allDOMNodes.push(target);
   DOMDesc.push({
     type: target.localName || target.tagName,
     content: target.innerHTML || target.innerText || target.value,
     outerHTML: target.outerHTML
   });
   xPathNodes.push(DOMNode);
-  console.log(DOMNodes);
+  DOMNodes = [];
   updateCounter();
   target.style.border = "2px double red";
   target.style.padding = "0.5rem";
