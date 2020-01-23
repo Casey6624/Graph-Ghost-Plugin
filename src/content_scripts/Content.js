@@ -3,7 +3,6 @@ let DOMNodes = [];
 let xPathNodes = [];
 let finishedEntities = [];
 let DOMDesc = [];
-let allDOMNodes = [];
 
 let btnSubmit, btnCancel, btnAddAttri, counterLabel, txtAttri;
 
@@ -38,7 +37,6 @@ function btnAddHandler() {
   let data = {
     entityName: txtAttri.value,
     xPathNodes: [...xPathNodes],
-    DOMNodes: [...DOMNodes],
     DOMDesc: [...DOMDesc]
   };
 
@@ -48,7 +46,6 @@ function btnAddHandler() {
     style.background = "#f2f2f2";
   });
 
-  DOMNodes = [];
   DOMDesc = [];
   xPathNodes = [];
   txtAttri.value = "";
@@ -198,12 +195,12 @@ function selectingEntities({ target }) {
     arrCheck = attributes.includes(target);
   }); */
 
-  if (allDOMNodes.includes(target)) {
+  if (DOMNodes.includes(target)) {
     console.log("already in array");
     return;
   }
   // Check if item already exists in array, remove it if so
-  if (allDOMNodes.includes(target)) {
+  if (DOMNodes.includes(target)) {
     DOMNodes = DOMNodes.filter(el => el !== target);
     updateCounter();
     target.style.border = "";
@@ -214,7 +211,7 @@ function selectingEntities({ target }) {
   // Add the new item as it is not in the array
   const DOMNode = createXPathFromElement(target);
   DOMNodes.push(target);
-  allDOMNodes.push(target);
+  DOMNodes.push(target);
   DOMDesc.push({
     type: target.localName || target.tagName,
     content: target.innerHTML || target.innerText || target.value,
