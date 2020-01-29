@@ -14,53 +14,13 @@ const NODE_SERVER = "http://localhost:4500/crawl-me";
 const CRAWL_URL = "http://localhost:8000/crawl";
 
 // Add a listener to listen to the message from background.js
-chrome.runtime.onMessage.addListener(messageFromBackgroundjs);
-
-/* HANDLERS */
-// Cancel functionality
-function btnCancelHandler() {
-  removeButtonsAndListeners();
-}
-// Submit/Done functionality
-function btnSubmitHandler() {
-  postToServer();
-}
-// Add Attribute functionality
-function btnAddHandler() {
-  console.log("add handler triggered!");
-  if (txtAttri.value === "") {
-    // TODO: add validation
-    console.log("this cannot be empty");
-    return;
-  }
-  let tempArr = [...DOMNodes];
-  let data = {
-    entityName: txtAttri.value,
-    xPathNodes: [...xPathNodes],
-    DOMDesc: [...DOMDesc]
-  };
-
-  finishedEntities.push(data);
-  DOMNodes.forEach(({ style }) => {
-    style.border = "2px double black";
-    style.background = "#f2f2f2";
-  });
-
-  allDOMNodes.push(...DOMNodes);
-
-  DOMNodes = [];
-  DOMDesc = [];
-  xPathNodes = [];
-  txtAttri.value = "";
-  txtAttri.textContent = "";
-  console.log(finishedEntities);
-  updateCounter();
-}
-
-/* EVENTS */
-
-function messageFromBackgroundjs({ id, url }, sender, sendResponse) {
-  currUrl = url;
+chrome.runtime.onMessage.addListener(function messageFromBackgroundjs(
+  data,
+  sender,
+  sendResponse
+) {
+  console.log(data);
+  currUrl = data;
   // set up submit button if not defined
   document.addEventListener("click", e => selectingEntities(e));
   if (btnSubmit === undefined) {
@@ -105,7 +65,50 @@ function messageFromBackgroundjs({ id, url }, sender, sendResponse) {
     counterLabel.innerHTML = `${DOMNodes.length} DOMNodes Selected`;
     document.body.appendChild(counterLabel);
   }
+});
+
+/* HANDLERS */
+// Cancel functionality
+function btnCancelHandler() {
+  removeButtonsAndListeners();
 }
+// Submit/Done functionality
+function btnSubmitHandler() {
+  postToServer();
+}
+// Add Attribute functionality
+function btnAddHandler() {
+  console.log("add handler triggered!");
+  if (txtAttri.value === "") {
+    // TODO: add validation
+    console.log("this cannot be empty");
+    return;
+  }
+  let tempArr = [...DOMNodes];
+  let data = {
+    entityName: txtAttri.value,
+    xPathNodes: [...xPathNodes],
+    DOMDesc: [...DOMDesc]
+  };
+
+  finishedEntities.push(data);
+  DOMNodes.forEach(({ style }) => {
+    style.border = "2px double black";
+    style.background = "#f2f2f2";
+  });
+
+  allDOMNodes.push(...DOMNodes);
+
+  DOMNodes = [];
+  DOMDesc = [];
+  xPathNodes = [];
+  txtAttri.value = "";
+  txtAttri.textContent = "";
+  console.log(finishedEntities);
+  updateCounter();
+}
+
+/* EVENTS */
 
 function removeButtonsAndListeners() {
   console.log("Removing plugin event listeners and controls");

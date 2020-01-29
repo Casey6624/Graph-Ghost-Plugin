@@ -2,13 +2,11 @@ console.log("background.js is running");
 
 chrome.browserAction.onClicked.addListener(btnClicked);
 
-/* chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-  console.log(request);
-
-  chrome.tabs.create({ url: chrome.extension.getURL("notes.html") });
-  sendResponse();
-}); */
-
-function btnClicked({ id, url }) {
-  chrome.tabs.sendMessage(id, url);
+function btnClicked({ id }) {
+  // Fallback incase we cannot grab the URL using the chrome.tabs API
+  let tablink = "<PASTE_YOUR_URL_HERE>";
+  chrome.tabs.getSelected(null, function(tab) {
+    tablink = tab.url;
+    chrome.tabs.sendMessage(id, tablink);
+  });
 }
