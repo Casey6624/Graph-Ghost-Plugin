@@ -105,7 +105,7 @@ function btnAddHandler() {
   txtAttri.value = "";
   txtAttri.textContent = "";
   console.log(finishedEntities);
-  updateCounter();
+cd f2f2f2  updateCounter();
 }
 
 /* EVENTS */

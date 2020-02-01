@@ -6,7 +6,9 @@ function btnClicked({ id }) {
   // Fallback incase we cannot grab the URL using the chrome.tabs API
   let tablink = "<PASTE_YOUR_URL_HERE>";
   chrome.tabs.getSelected(null, function(tab) {
-    tablink = tab.url;
+    if (tablink.url) {
+      tablink = tab.url;
+    }
     chrome.tabs.sendMessage(id, tablink);
   });
 }
