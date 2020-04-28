@@ -10,8 +10,8 @@ let btnSubmit, btnCancel, btnAddAttri, counterLabel, txtAttri;
 let currUrl = "";
 
 // this will be eventually be https://graphghost.co.uk/api or something similar
-const NODE_SERVER = "http://localhost:4500/crawl-me";
-const CRAWL_URL = "http://localhost:8000/crawl";
+const createCrawlEndpoint = "https://graphghost.co.uk/crawl-me";
+const showCrawlEndpoint = "https://graphghost.co.uk/crawl";
 
 // Add a listener to listen to the message from background.js
 chrome.runtime.onMessage.addListener(function messageFromBackgroundjs(
@@ -22,7 +22,7 @@ chrome.runtime.onMessage.addListener(function messageFromBackgroundjs(
   console.log(data);
   currUrl = data;
   // set up submit button if not defined
-  document.addEventListener("click", e => selectingEntities(e));
+  document.addEventListener("click", (e) => selectingEntities(e));
   if (btnSubmit === undefined) {
     btnSubmit = document.createElement("div");
     btnSubmit.setAttribute("id", "g-g-d-Submit");
@@ -88,7 +88,7 @@ function btnAddHandler() {
   let data = {
     entityName: txtAttri.value,
     xPathNodes: [...xPathNodes],
-    DOMDesc: [...DOMDesc]
+    DOMDesc: [...DOMDesc],
   };
 
   finishedEntities.push(data);
@@ -105,7 +105,7 @@ function btnAddHandler() {
   txtAttri.value = "";
   txtAttri.textContent = "";
   console.log(finishedEntities);
-cd f2f2f2  updateCounter();
+  updateCounter();
 }
 
 /* EVENTS */
@@ -154,24 +154,24 @@ function postToServer() {
   const data = {
     entities: [...finishedEntities],
     // This needs changing to be dynamic via the google tabs API
-    url: currUrl
+    url: currUrl,
   };
-  fetch(NODE_SERVER, {
+  fetch(createCrawlEndpoint, {
     method: "POST",
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
     },
-    body: JSON.stringify(data)
+    body: JSON.stringify(data),
   })
-    .then(res => {
+    .then((res) => {
       return res.json();
     })
-    .then(resData => {
+    .then((resData) => {
       console.log(resData);
       const { url } = resData;
-      window.location = `${CRAWL_URL}?cid=${url}`;
+      window.location = `${showCrawlEndpoint}?cid=${url}`;
     })
-    .catch(err => {
+    .catch((err) => {
       return err;
     });
 }
@@ -208,7 +208,7 @@ function selectingEntities({ target }) {
   }
   // Check if item already exists in array, remove it if so
   if (DOMNodes.includes(target)) {
-    DOMNodes = DOMNodes.filter(el => el !== target);
+    DOMNodes = DOMNodes.filter((el) => el !== target);
     updateCounter();
     target.removeAttribute("style");
     console.log(DOMNodes);
@@ -220,7 +220,7 @@ function selectingEntities({ target }) {
   DOMDesc.push({
     type: target.localName || target.tagName,
     content: target.innerHTML || target.innerText || target.value,
-    outerHTML: target.outerHTML
+    outerHTML: target.outerHTML,
   });
   xPathNodes.push(DOMNode);
   console.log(DOMNodes);
