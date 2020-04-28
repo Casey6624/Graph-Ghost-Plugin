@@ -10,8 +10,8 @@ let btnSubmit, btnCancel, btnAddAttri, counterLabel, txtAttri;
 let currUrl = "";
 
 // this will be eventually be https://graphghost.co.uk/api or something similar
-const createCrawlEndpoint = "https://graphghost.co.uk/crawl-me";
-const showCrawlEndpoint = "https://graphghost.co.uk/crawl";
+const createCrawlEndpoint = "https://graphghost.co.uk/crawl-me/";
+const showCrawlEndpoint = "https://graphghost.co.uk/crawl/";
 
 // Add a listener to listen to the message from background.js
 chrome.runtime.onMessage.addListener(function messageFromBackgroundjs(
